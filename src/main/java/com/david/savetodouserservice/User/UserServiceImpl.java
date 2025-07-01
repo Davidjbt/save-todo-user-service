@@ -2,6 +2,8 @@ package com.david.savetodouserservice.User;
 
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -28,6 +30,34 @@ public class UserServiceImpl implements UserService {
         // todo: Throw error if not found and create Exception and Handler
 
         return userMapper.toUserResponse(user);
+    }
+
+    @Override
+    public List<UserResponse> findAllUsers() {
+        return userRepository.findAll().stream()
+                .map(userMapper::toUserResponse)
+                .toList();
+    }
+
+    @Override
+    public UserResponse updateUser(Long id, UpdateUserRequest userRequest) {
+        User user = userRepository.findById(id).orElse(null);
+
+        if (user == null) return null; // todo: Replace later with exception handling
+
+        user.setName(userRequest.name());
+        user = userRepository.save(user);
+
+        return userMapper.toUserResponse(user);
+    }
+
+    @Override
+    public void deleteUser(Long id) {
+        User user = userRepository.findById(id).orElse(null);
+
+        if (user == null) return; // todo: Replace later with exception handling
+
+        userRepository.delete(user);
     }
 
 }
