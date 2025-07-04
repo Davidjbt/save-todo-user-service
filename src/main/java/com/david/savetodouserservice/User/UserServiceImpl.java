@@ -3,6 +3,7 @@ package com.david.savetodouserservice.User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -17,6 +18,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse createUser(CreateUserRequest userRequest) {
+        Optional<User> existingUser = userRepository.findByEmail(userRequest.email());
+
+        if (existingUser.isPresent())
+            throw new UserAlreadyExistsException("User already exists");
+
         User user = userMapper.toUser(userRequest);
         user = userRepository.save(user);
 
@@ -25,9 +31,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse findUserById(Long id) {
-        User user = userRepository.findById(id).orElse(null);
-
-        // todo: Throw error if not found and create Exception and Handler
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("User", "id", id.toString())
+        );
 
         return userMapper.toUserResponse(user);
     }
@@ -41,9 +47,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse updateUser(Long id, UpdateUserRequest userRequest) {
-        User user = userRepository.findById(id).orElse(null);
-
-        if (user == null) return null; // todo: Replace later with exception handling
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("User", "id", id.toString())
+        );
 
         user.setName(userRequest.name());
         user = userRepository.save(user);
@@ -53,9 +59,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUser(Long id) {
-        User user = userRepository.findById(id).orElse(null);
-
-        if (user == null) return; // todo: Replace later with exception handling
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("User", "id", id.toString())
+        );
 
         userRepository.delete(user);
     }
