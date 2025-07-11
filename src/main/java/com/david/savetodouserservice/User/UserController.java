@@ -1,6 +1,9 @@
 package com.david.savetodouserservice.User;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -8,7 +11,8 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/users")
+@RequestMapping("/api/users")
+@Validated
 public class UserController {
 
     private final UserService userService;
@@ -18,7 +22,7 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<UserResponse> createUser(@RequestBody CreateUserRequest userRequest) {
+    public ResponseEntity<UserResponse> createUser(@Valid @RequestBody CreateUserRequest userRequest) {
         UserResponse createdUser = userService.createUser(userRequest);
 
         URI location = ServletUriComponentsBuilder
@@ -38,20 +42,20 @@ public class UserController {
                 .ok(userService.findAllUsers());
     }
 
-    @GetMapping("{id}")
-    public ResponseEntity<UserResponse> getUser(@PathVariable Long id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<UserResponse> getUser(@Min(1) @PathVariable Long id) {
         return ResponseEntity
                 .ok(userService.findUserById(id));
     }
 
-    @PutMapping("{id}")
-    public ResponseEntity<UserResponse> updateUser(@PathVariable Long id, @RequestBody UpdateUserRequest userRequest) {
+    @PutMapping("/{id}")
+    public ResponseEntity<UserResponse> updateUser(@Min(1) @PathVariable Long id, @Valid @RequestBody UpdateUserRequest userRequest) {
         return ResponseEntity
                 .ok(userService.updateUser(id, userRequest));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteUser(@Min(1) @PathVariable Long id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
