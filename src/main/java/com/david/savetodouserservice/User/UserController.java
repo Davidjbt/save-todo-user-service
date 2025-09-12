@@ -60,4 +60,10 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/exists")
+    public ResponseEntity<Boolean> emailExist(@RequestParam String email) {
+        return ResponseEntity
+                .ok(userService.doesEmailExist(email));
+    }
+
 }

@@ -13,4 +13,6 @@ public interface UserService {
     UserResponse updateUser(Long id, UpdateUserRequest userRequest);
 
     void deleteUser(Long id);
+
+    boolean doesEmailExist(String email);
 }
