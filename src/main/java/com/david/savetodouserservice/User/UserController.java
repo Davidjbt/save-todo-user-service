@@ -1,7 +1,9 @@
 package com.david.savetodouserservice.User;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -58,6 +60,17 @@ public class UserController {
     public ResponseEntity<Void> deleteUser(@Min(1) @PathVariable Long id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/exists")
+    public ResponseEntity<Boolean> emailExist(
+            @RequestParam
+            @NotBlank(message = "Email required!")
+            @Email(message = "Invalid email format!")
+            String email
+    ) {
+        return ResponseEntity
+                .ok(userService.doesEmailExist(email));
     }
 
 }
