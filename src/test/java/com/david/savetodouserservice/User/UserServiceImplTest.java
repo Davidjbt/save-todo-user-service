@@ -269,10 +269,10 @@ class UserServiceImplTest {
         when(userRepository.existsByEmail(email)).thenReturn(true);
 
         // Act
-        boolean expected = userService.doesEmailExist(email);
+        boolean actual = userService.doesEmailExist(email);
 
         // Assert
-        assertThat(expected).isTrue();
+        assertThat(actual).isTrue();
 
         verify(userRepository).existsByEmail(email);
         verifyNoMoreInteractions(userRepository);
